@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://api.i1000u.store/api/:path*" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
