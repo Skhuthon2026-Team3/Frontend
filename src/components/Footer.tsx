@@ -1,5 +1,4 @@
 import './Footer.css'
-import { InstagramIcon, TwitterIcon, YoutubeIcon } from './icons'
 import type { Route } from '../router'
 
 type Props = {
@@ -66,29 +65,11 @@ export default function Footer({ onNavigate, isAuthenticated }: Props) {
               )}
             </ul>
           </div>
-          <div className="footer-col">
-            <h5>SOCIAL</h5>
-            <div className="social-row">
-              <a href="#instagram" aria-label="Instagram">
-                <InstagramIcon />
-              </a>
-              <a href="#twitter" aria-label="Twitter">
-                <TwitterIcon />
-              </a>
-              <a href="#youtube" aria-label="YouTube">
-                <YoutubeIcon />
-              </a>
-            </div>
-          </div>
         </div>
       </div>
 
       <div className="footer-bottom">
         <span>© 2026 Memory.Tune. All rights reserved.</span>
-        <div className="footer-legal">
-          <a href="#terms">이용약관</a>
-          <a href="#privacy">개인정보처리방침</a>
-        </div>
       </div>
     </footer>
   )
