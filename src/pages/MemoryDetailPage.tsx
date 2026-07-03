@@ -45,6 +45,8 @@ type Props = {
   memoryId?: number
   /** Owner view (my post): fetches private detail, shows breadcrumb + 저장/삭제. */
   owner?: boolean
+  /** Breadcrumb label for the "back" crumb (e.g. 나의 추억 / 모두의 추억 / 홈). */
+  backLabel?: string
   onBack: () => void
   /** Public view: "이 노래로 나도 기록하기". */
   onRecord?: (memory: MemoryDetailResponse) => void
@@ -57,6 +59,7 @@ type Props = {
 export default function MemoryDetailPage({
   memoryId,
   owner = false,
+  backLabel,
   onBack,
   onRecord,
   onDeleted,
@@ -350,10 +353,10 @@ export default function MemoryDetailPage({
 
   return (
     <div className="detail-page">
-      {owner && (
+      {(backLabel ?? (owner ? '나의 추억' : null)) && (
         <nav className="detail-breadcrumb" aria-label="위치">
           <button type="button" className="detail-crumb-link" onClick={onBack}>
-            나의 추억
+            {backLabel ?? '나의 추억'}
           </button>
           <ChevronRightIcon size={10} />
           <span className="detail-crumb-current">{memory.trackName}</span>

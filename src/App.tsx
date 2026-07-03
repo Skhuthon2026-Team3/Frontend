@@ -135,6 +135,7 @@ function App() {
         {route === 'memoryDetail' && (
           <MemoryDetailPage
             memoryId={memoryId}
+            backLabel={detailOrigin === 'publicMemories' ? '모두의 추억' : '홈'}
             onBack={() => navigate(detailOrigin)}
             onRecord={(memory) => {
               setPrefillSong({
