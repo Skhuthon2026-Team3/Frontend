@@ -1,0 +1,22 @@
+/* ===== View count badge — src/components/ViewCount.tsx ===== */
+.view-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--mt-text-4);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.view-count-sm {
+  font-size: 12px;
+}
+
+.view-count-md {
+  font-size: 14px;
+}
+
+.view-count-num {
+  font-variant-numeric: tabular-nums;
+}

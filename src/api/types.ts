@@ -78,6 +78,7 @@ export type MemoryListResponse = {
   createdAt: string
   likeCount?: number
   likedByMe?: boolean
+  viewCount?: number
 }
 
 /** GET /api/memories/{id}, /api/memories/public/{id} */
@@ -94,6 +95,7 @@ export type MemoryDetailResponse = {
   createdAt: string
   likeCount?: number
   likedByMe?: boolean
+  viewCount?: number
 }
 
 /** Sort order for GET /api/memories/public */
