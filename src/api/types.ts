@@ -108,3 +108,29 @@ export type LikeStatusResponse = {
   likeCount: number
   likedByMe: boolean
 }
+
+/** POST /api/memories/{id}/comments request body */
+export type CommentCreateRequest = {
+  content: string
+}
+
+/** GET/POST /api/memories/{id}/comments */
+export type CommentResponse = {
+  commentId: number
+  memoryId: number
+  memberId: number
+  authorName: string
+  content: string
+  createdAt: string
+}
+
+/** GET /api/comments/me */
+export type MyCommentResponse = {
+  commentId: number
+  content: string
+  createdAt: string
+  memoryId: number
+  memoryTitle: string
+  memoryTrackName: string
+  memoryArtistName: string
+}

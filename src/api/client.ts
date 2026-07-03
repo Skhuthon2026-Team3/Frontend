@@ -2,8 +2,10 @@ import type {
   AiMemoryGenerateRequest,
   AiMemoryGenerateResponse,
   ApiResponse,
+  CommentResponse,
   LikeStatusResponse,
   MemoryCreateRequest,
+  MyCommentResponse,
   MemoryDetailResponse,
   MemoryListResponse,
   MemoryResponse,
@@ -185,5 +187,28 @@ export const api = {
       auth: true,
       signal,
     })
+  },
+
+  getComments(memoryId: number, signal?: AbortSignal) {
+    return request<CommentResponse[]>(`/api/memories/${memoryId}/comments`, { signal })
+  },
+
+  createComment(memoryId: number, content: string) {
+    return request<CommentResponse>(`/api/memories/${memoryId}/comments`, {
+      method: 'POST',
+      body: { content },
+      auth: true,
+    })
+  },
+
+  deleteComment(commentId: number) {
+    return request<void>(`/api/comments/${commentId}`, {
+      method: 'DELETE',
+      auth: true,
+    })
+  },
+
+  getMyComments(signal?: AbortSignal) {
+    return request<MyCommentResponse[]>('/api/comments/me', { auth: true, signal })
   },
 }

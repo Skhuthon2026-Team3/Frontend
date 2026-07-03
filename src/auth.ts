@@ -52,6 +52,20 @@ export function consumeAuthFromUrl(): boolean {
     email: env.email ?? pick(['email', 'mail']) ?? undefined,
     nickname: env.nickname ?? pick(['nickname', 'name', 'username']) ?? undefined,
     provider: env.provider ?? pick(['provider', 'registrationId']) ?? undefined,
+    profileImage:
+      env.profileImage ??
+      pick([
+        'profileImage',
+        'profileImageUrl',
+        'picture',
+        'imageUrl',
+        'image',
+        'avatar',
+        'avatarUrl',
+        'profile_image_url',
+        'thumbnailImage',
+      ]) ??
+      undefined,
   })
   setToken(env.accessToken)
 
@@ -65,6 +79,7 @@ export type AuthEnvelope = {
   email?: string
   nickname?: string
   provider?: string
+  profileImage?: string
 }
 
 /**
@@ -86,6 +101,12 @@ export function parseAuthEnvelope(input: string): AuthEnvelope {
         email: str(obj.email) ?? str(obj.mail),
         nickname: str(obj.nickname) ?? str(obj.name) ?? str(obj.username),
         provider: str(obj.provider) ?? str(obj.registrationId),
+        profileImage:
+          str(obj.profileImage) ??
+          str(obj.profileImageUrl) ??
+          str(obj.picture) ??
+          str(obj.imageUrl) ??
+          str(obj.profile_image_url),
       }
     }
   } catch {
@@ -110,7 +131,12 @@ export function normalizeToken(input: string): string | null {
 export function loginWithEnvelope(input: string): boolean {
   const env = parseAuthEnvelope(input)
   if (!env.accessToken) return false
-  setStoredProfile({ email: env.email, nickname: env.nickname, provider: env.provider })
+  setStoredProfile({
+    email: env.email,
+    nickname: env.nickname,
+    provider: env.provider,
+    profileImage: env.profileImage,
+  })
   setToken(env.accessToken)
   return true
 }
@@ -154,6 +180,7 @@ export type UserProfile = {
   nickname: string | null
   email: string | null
   provider: string | null
+  profileImage: string | null
 }
 
 // The backend's JWT currently carries only { sub, memberId, iat, exp } — no
@@ -162,13 +189,21 @@ export type UserProfile = {
 // them here so the profile survives reloads.
 const PROFILE_KEY = 'userProfile'
 
-type StoredProfile = { nickname?: string; email?: string; provider?: string }
+type StoredProfile = {
+  nickname?: string
+  email?: string
+  provider?: string
+  profileImage?: string
+}
 
 export function setStoredProfile(p: StoredProfile) {
-  const clean: StoredProfile = {}
+  // Merge with any existing profile so a later partial update (e.g. from a
+  // token-only source) doesn't wipe the image cached at login.
+  const clean: StoredProfile = { ...getStoredProfile() }
   if (p.nickname?.trim()) clean.nickname = p.nickname.trim()
   if (p.email?.trim()) clean.email = p.email.trim()
   if (p.provider?.trim()) clean.provider = p.provider.trim()
+  if (p.profileImage?.trim()) clean.profileImage = p.profileImage.trim()
   if (Object.keys(clean).length) localStorage.setItem(PROFILE_KEY, JSON.stringify(clean))
 }
 
@@ -234,6 +269,10 @@ export function getUserProfile(): UserProfile {
       null,
     email: jwtEmail ?? storedEmail,
     provider: provider ? provider.toLowerCase() : null,
+    profileImage:
+      pickClaim(claims, ['picture', 'profileImage', 'profileImageUrl', 'imageUrl']) ??
+      stored.profileImage ??
+      null,
   }
 }
 

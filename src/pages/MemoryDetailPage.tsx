@@ -16,6 +16,7 @@ import { downloadMemoryImage } from '../memoryCard'
 import StoryShareButton from '../components/StoryShareButton'
 import AiGeneratingIndicator from '../components/AiGeneratingIndicator'
 import LikeButton from '../components/LikeButton'
+import CommentsSection from '../components/CommentsSection'
 import type { MemoryDetailResponse } from '../api/types'
 
 function formatDate(iso: string): string {
@@ -603,6 +604,11 @@ export default function MemoryDetailPage({
           )}
         </div>
       </div>
+
+      {/* Comments — public memories only, hidden while editing. */}
+      {!editing && memory.isPublic && (
+        <CommentsSection memoryId={memory.memoryId} onRequireLogin={onRequireLogin} />
+      )}
     </div>
   )
 }
