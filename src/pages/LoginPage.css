@@ -21,15 +21,12 @@
   justify-content: center;
   margin-bottom: 20px;
 }
-.login-brand-mark {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
+.login-logo {
+  width: 64px;
+  height: 64px;
   border-radius: 18px;
-  background: #171717;
-  color: #fff;
+  object-fit: contain;
+  display: block;
 }
 .login-title {
   font-size: 26px;
@@ -105,65 +102,4 @@
   font-size: 12px;
   line-height: 18px;
   color: #a3a3a3;
-}
-
-/* Dev token login */
-.login-dev {
-  margin-top: 18px;
-  border-top: 1px solid #f0f0f0;
-  padding-top: 14px;
-}
-.login-dev-toggle {
-  background: none;
-  border: none;
-  color: #a3a3a3;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.login-dev-toggle:hover {
-  color: #737373;
-}
-.login-dev-body {
-  margin-top: 12px;
-  text-align: left;
-}
-.login-dev-help {
-  font-size: 12px;
-  color: #737373;
-  margin: 0 0 8px;
-}
-.login-dev-input {
-  width: 100%;
-  border: 1px solid #e5e5e5;
-  border-radius: 10px;
-  padding: 10px;
-  font-size: 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  resize: vertical;
-  box-sizing: border-box;
-}
-.login-dev-input:focus {
-  outline: none;
-  border-color: #171717;
-}
-.login-dev-error {
-  margin: 6px 0 0;
-  font-size: 12px;
-  color: #dc2626;
-}
-.login-dev-submit {
-  width: 100%;
-  margin-top: 10px;
-  height: 44px;
-  border: none;
-  border-radius: 10px;
-  background: #171717;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-.login-dev-submit:hover {
-  background: #000;
 }

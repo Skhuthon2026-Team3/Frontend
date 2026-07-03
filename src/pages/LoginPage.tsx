@@ -1,7 +1,6 @@
-import { useState } from 'react'
 import './LoginPage.css'
-import { MusicNoteIcon } from '../components/icons'
-import { loginWithGoogle, loginWithKakao, loginWithEnvelope } from '../auth'
+import mtLogo from '../assets/MT_LOGO.png'
+import { loginWithGoogle, loginWithKakao } from '../auth'
 
 function KakaoIcon({ size = 20 }: { size?: number }) {
   return (
@@ -42,26 +41,12 @@ type Props = {
   onLoggedIn: () => void
 }
 
-export default function LoginPage({ onBack, onLoggedIn }: Props) {
-  const [showDev, setShowDev] = useState(false)
-  const [tokenInput, setTokenInput] = useState('')
-  const [devError, setDevError] = useState<string | null>(null)
-
-  function handleDevLogin() {
-    if (!loginWithEnvelope(tokenInput)) {
-      setDevError('토큰(또는 토큰 JSON)을 붙여넣어 주세요.')
-      return
-    }
-    onLoggedIn()
-  }
-
+export default function LoginPage({ onBack }: Props) {
   return (
     <div className="login-page">
       <div className="login-card">
-        <div className="login-brand" aria-hidden="true">
-          <span className="login-brand-mark">
-            <MusicNoteIcon size={26} />
-          </span>
+        <div className="login-brand">
+          <img src={mtLogo} alt="Memory.Tune" className="login-logo" />
         </div>
 
         <h1 className="login-title">Memory.Tune</h1>
@@ -88,38 +73,6 @@ export default function LoginPage({ onBack, onLoggedIn }: Props) {
         <button type="button" className="login-skip" onClick={onBack}>
           둘러보기
         </button>
-
-        <div className="login-dev">
-          <button
-            type="button"
-            className="login-dev-toggle"
-            onClick={() => setShowDev((v) => !v)}
-          >
-            개발용 토큰 로그인 {showDev ? '▲' : '▼'}
-          </button>
-
-          {showDev && (
-            <div className="login-dev-body">
-              <p className="login-dev-help">
-                카카오 로그인 후 받은 JSON 또는 accessToken을 그대로 붙여넣으세요.
-              </p>
-              <textarea
-                className="login-dev-input"
-                placeholder='{"tokenType":"Bearer","accessToken":"eyJ...","memberId":3} 또는 eyJ... 토큰'
-                value={tokenInput}
-                onChange={(e) => {
-                  setTokenInput(e.target.value)
-                  setDevError(null)
-                }}
-                rows={4}
-              />
-              {devError && <p className="login-dev-error">{devError}</p>}
-              <button type="button" className="login-dev-submit" onClick={handleDevLogin}>
-                토큰으로 로그인
-              </button>
-            </div>
-          )}
-        </div>
 
         <p className="login-terms">
           로그인 시 서비스 이용약관 및 개인정보 처리방침에 동의하게 됩니다.
