@@ -127,6 +127,8 @@ export default function CreateMemoryPage({ onBack, onCreated }: Props) {
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         setAiError('로그인이 필요합니다.')
+      } else if (err instanceof DOMException && (err.name === 'TimeoutError' || err.name === 'AbortError')) {
+        setAiError('AI 서버 응답이 지연되고 있어요. 잠시 후 다시 시도해주세요.')
       } else {
         setAiError('AI 생성에 실패했습니다. 잠시 후 다시 시도해주세요.')
       }

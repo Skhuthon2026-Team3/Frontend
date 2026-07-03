@@ -61,10 +61,12 @@ type RequestOptions = {
   body?: unknown
   auth?: boolean
   signal?: AbortSignal
+  /** Abort the request after this many ms (e.g. the slow AI wake-up path). */
+  timeoutMs?: number
 }
 
 async function request<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, auth = false, signal } = options
+  const { method = 'GET', body, auth = false, signal, timeoutMs } = options
 
   const headers: Record<string, string> = {}
   if (body !== undefined) headers['Content-Type'] = 'application/json'
@@ -74,12 +76,35 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     if (token) headers.Authorization = `Bearer ${token}`
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-    signal,
-  })
+  // A client-side timeout so long-running calls (e.g. AI generation, which may
+  // wait for the AI server to wake from sleep) don't hang forever — while still
+  // giving the backend enough time to finish its own wake-up + retry loop.
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+  let fetchSignal = signal
+  if (timeoutMs) {
+    const controller = new AbortController()
+    timeoutId = setTimeout(
+      () => controller.abort(new DOMException('요청 시간이 초과되었습니다.', 'TimeoutError')),
+      timeoutMs,
+    )
+    if (signal) {
+      if (signal.aborted) controller.abort()
+      else signal.addEventListener('abort', () => controller.abort(), { once: true })
+    }
+    fetchSignal = controller.signal
+  }
+
+  let res: Response
+  try {
+    res = await fetch(`${BASE_URL}${path}`, {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+      signal: fetchSignal,
+    })
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId)
+  }
 
   if (!res.ok) {
     let message = `요청에 실패했습니다 (${res.status})`
@@ -155,6 +180,9 @@ export const api = {
       method: 'POST',
       body: payload,
       auth: true,
+      // The backend wakes the sleeping AI server (retries up to ~60s), so give
+      // it a generous window before the client gives up.
+      timeoutMs: 70000,
     })
   },
 
