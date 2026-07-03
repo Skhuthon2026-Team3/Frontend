@@ -28,6 +28,17 @@ function readPageFromUrl(): number {
   return Number.isInteger(p) && p >= 1 ? p : 1
 }
 
+// Persist the grid/list and sort choices so they survive navigating to a detail
+// page and back.
+const VIEW_KEY = 'publicMemoriesView'
+const SORT_KEY = 'publicMemoriesSort'
+function readView(): 'grid' | 'list' {
+  return localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'grid'
+}
+function readSort(): PublicMemorySort {
+  return localStorage.getItem(SORT_KEY) === 'likes' ? 'likes' : 'recent'
+}
+
 type Props = {
   onOpenMemory: (memoryId: number) => void
   onRequireLogin: () => void
@@ -37,8 +48,8 @@ export default function PublicMemoriesPage({ onOpenMemory, onRequireLogin }: Pro
   const [memories, setMemories] = useState<MemoryListResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [view, setView] = useState<'grid' | 'list'>('grid')
-  const [sort, setSort] = useState<PublicMemorySort>('recent')
+  const [view, setView] = useState<'grid' | 'list'>(readView)
+  const [sort, setSort] = useState<PublicMemorySort>(readSort)
   // Restore the page from the URL so browser back (from a detail page) returns
   // to the same page the user was on.
   const [page, setPage] = useState(() => readPageFromUrl())
@@ -112,6 +123,14 @@ export default function PublicMemoriesPage({ onOpenMemory, onRequireLogin }: Pro
     const url = page > 1 ? `${base}?page=${page}` : base
     window.history.replaceState(window.history.state, '', url)
   }, [page])
+
+  // Remember the grid/list and sort choices across navigation.
+  useEffect(() => {
+    localStorage.setItem(VIEW_KEY, view)
+  }, [view])
+  useEffect(() => {
+    localStorage.setItem(SORT_KEY, sort)
+  }, [sort])
 
   const pageItems = memories.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 

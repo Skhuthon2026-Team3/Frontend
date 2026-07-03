@@ -29,6 +29,12 @@ function readPageFromUrl(): number {
   return Number.isInteger(p) && p >= 1 ? p : 1
 }
 
+// Persist the grid/list choice so it survives navigating to a detail page and back.
+const VIEW_KEY = 'memoriesView'
+function readView(): 'grid' | 'list' {
+  return localStorage.getItem(VIEW_KEY) === 'list' ? 'list' : 'grid'
+}
+
 type Props = {
   isAuthenticated: boolean
   onAddNew: () => void
@@ -43,7 +49,7 @@ export default function MemoriesPage({
   const [memories, setMemories] = useState<MemoryListResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [view, setView] = useState<'grid' | 'list'>('grid')
+  const [view, setView] = useState<'grid' | 'list'>(readView)
   // Restore the page from the URL so browser back (from a detail page) returns
   // to the same page the user was on.
   const [page, setPage] = useState(() => readPageFromUrl())
@@ -114,6 +120,11 @@ export default function MemoriesPage({
     const url = page > 1 ? `${base}?page=${page}` : base
     window.history.replaceState(window.history.state, '', url)
   }, [page])
+
+  // Remember the grid/list choice across navigation.
+  useEffect(() => {
+    localStorage.setItem(VIEW_KEY, view)
+  }, [view])
 
   if (!isAuthenticated) {
     return (
