@@ -26,6 +26,7 @@ function App() {
     navigate('memoryDetail', id)
   }
 
+
   const handleLogout = () => {
     setToken(null)
     navigate('home')

@@ -24,6 +24,11 @@ function formatDate(iso: string): string {
   ).padStart(2, '0')}`
 }
 
+function readPageFromUrl(): number {
+  const p = Number(new URLSearchParams(window.location.search).get('page'))
+  return Number.isInteger(p) && p >= 1 ? p : 1
+}
+
 type Props = {
   isAuthenticated: boolean
   onAddNew: () => void
@@ -39,7 +44,9 @@ export default function MemoriesPage({
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<'grid' | 'list'>('grid')
-  const [page, setPage] = useState(1)
+  // Restore the page from the URL so browser back (from a detail page) returns
+  // to the same page the user was on.
+  const [page, setPage] = useState(() => readPageFromUrl())
 
   // Shared click/keyboard handlers so a memory opens on click or Enter/Space.
   const openProps = (memoryId: number) => ({
@@ -94,10 +101,19 @@ export default function MemoriesPage({
 
   const totalPages = Math.max(1, Math.ceil(memories.length / PAGE_SIZE))
 
-  // Keep the current page in range after deletions / reloads.
+  // Keep the current page in range once the list has loaded. Guard on the loaded
+  // list (not just !loading) so a URL-restored page isn't snapped to 1 while the
+  // list is still empty (e.g. an aborted StrictMode fetch flips loading early).
   useEffect(() => {
-    if (page > totalPages) setPage(totalPages)
-  }, [page, totalPages])
+    if (memories.length > 0 && page > totalPages) setPage(totalPages)
+  }, [memories.length, page, totalPages])
+
+  // Reflect the current page in the URL so browser back restores it.
+  useEffect(() => {
+    const base = window.location.pathname
+    const url = page > 1 ? `${base}?page=${page}` : base
+    window.history.replaceState(window.history.state, '', url)
+  }, [page])
 
   if (!isAuthenticated) {
     return (
