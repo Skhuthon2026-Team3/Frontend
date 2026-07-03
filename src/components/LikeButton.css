@@ -1,0 +1,52 @@
+/* ===== Like toggle — src/components/LikeButton.tsx ===== */
+.like-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid var(--mt-border);
+  border-radius: 9999px;
+  background: var(--mt-surface);
+  color: var(--mt-text-4);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, transform 0.1s;
+}
+
+.like-btn-sm {
+  padding: 6px 10px;
+}
+
+.like-btn-md {
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+.like-btn:hover:not(:disabled) {
+  border-color: #fca5a5;
+  color: #ef4444;
+}
+
+.like-btn:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.like-btn:disabled {
+  cursor: default;
+}
+
+.like-btn.is-liked {
+  border-color: #fca5a5;
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.like-btn.is-liked svg {
+  color: #ef4444;
+}
+
+.like-count {
+  font-variant-numeric: tabular-nums;
+}

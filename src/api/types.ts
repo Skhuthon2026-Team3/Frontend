@@ -67,7 +67,7 @@ export type AiMemoryGenerateResponse = {
   content: string
 }
 
-/** GET /api/memories/recent, /api/memories/me */
+/** GET /api/memories/recent, /api/memories/public, /api/memories/me */
 export type MemoryListResponse = {
   memoryId: number
   title: string
@@ -76,6 +76,8 @@ export type MemoryListResponse = {
   artworkUrl?: string
   isPublic: boolean
   createdAt: string
+  likeCount?: number
+  likedByMe?: boolean
 }
 
 /** GET /api/memories/{id}, /api/memories/public/{id} */
@@ -90,4 +92,19 @@ export type MemoryDetailResponse = {
   previewUrl?: string
   isPublic: boolean
   createdAt: string
+  likeCount?: number
+  likedByMe?: boolean
+}
+
+/** Sort order for GET /api/memories/public */
+export type PublicMemorySort = 'recent' | 'likes'
+
+/**
+ * POST/DELETE /api/memories/{id}/likes and GET /api/memories/{id}/likes/status
+ * all return the memory's current like state.
+ */
+export type LikeStatusResponse = {
+  memoryId: number
+  likeCount: number
+  likedByMe: boolean
 }

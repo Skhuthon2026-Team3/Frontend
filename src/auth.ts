@@ -1,6 +1,7 @@
 import { useSyncExternalStore } from 'react'
 
 const TOKEN_KEY = 'accessToken'
+const MEMBER_ID_KEY = 'memberId'
 
 // Backend origin used for the OAuth2 redirect (full-page navigation, so CORS
 // does not apply). Override with VITE_OAUTH_BASE_URL if the host changes.
@@ -10,6 +11,53 @@ const listeners = new Set<() => void>()
 
 export function getToken(): string | null {
   return localStorage.getItem(TOKEN_KEY)
+}
+
+export function getMemberId(): string | null {
+  return localStorage.getItem(MEMBER_ID_KEY)
+}
+
+/**
+ * On app start, consume the auth values the backend appends to the redirect URL
+ * (`/?accessToken=...&memberId=...&email=...`, in either the query string or the
+ * hash), store them, then strip them from the address bar so it shows a clean
+ * `~/` URL. Returns true if an access token was found and stored.
+ */
+export function consumeAuthFromUrl(): boolean {
+  const sources = [
+    new URLSearchParams(window.location.search),
+    new URLSearchParams(window.location.hash.replace(/^#/, '')),
+  ]
+  const pick = (keys: string[]): string | null => {
+    for (const source of sources) {
+      for (const key of keys) {
+        const value = source.get(key)
+        if (value) return value
+      }
+    }
+    return null
+  }
+
+  const rawToken = pick(['accessToken', 'access_token', 'token', 'jwt'])
+  if (!rawToken) return false
+
+  // The token param may be a bare JWT or the backend's JSON envelope.
+  const env = parseAuthEnvelope(rawToken)
+  if (!env.accessToken) return false
+
+  const memberId = pick(['memberId', 'member_id', 'id'])
+  if (memberId) localStorage.setItem(MEMBER_ID_KEY, memberId)
+
+  setStoredProfile({
+    email: env.email ?? pick(['email', 'mail']) ?? undefined,
+    nickname: env.nickname ?? pick(['nickname', 'name', 'username']) ?? undefined,
+    provider: env.provider ?? pick(['provider', 'registrationId']) ?? undefined,
+  })
+  setToken(env.accessToken)
+
+  // Drop the auth params (and any hash) so the address bar shows just the root.
+  window.history.replaceState({}, '', '/')
+  return true
 }
 
 export type AuthEnvelope = {
@@ -195,6 +243,7 @@ export function setToken(token: string | null) {
   } else {
     localStorage.removeItem(TOKEN_KEY)
     localStorage.removeItem(PROFILE_KEY)
+    localStorage.removeItem(MEMBER_ID_KEY)
   }
   listeners.forEach((l) => l())
 }

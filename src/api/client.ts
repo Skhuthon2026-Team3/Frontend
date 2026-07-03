@@ -2,12 +2,14 @@ import type {
   AiMemoryGenerateRequest,
   AiMemoryGenerateResponse,
   ApiResponse,
+  LikeStatusResponse,
   MemoryCreateRequest,
   MemoryDetailResponse,
   MemoryListResponse,
   MemoryResponse,
   MemoryUpdateRequest,
   MusicSearchResponse,
+  PublicMemorySort,
 } from './types'
 import { getToken } from '../auth'
 
@@ -113,6 +115,15 @@ export const api = {
     return request<MemoryListResponse[]>('/api/memories/recent', { signal })
   },
 
+  getPublicMemories(sort: PublicMemorySort = 'recent', signal?: AbortSignal) {
+    const query = new URLSearchParams({ sort }).toString()
+    // Send the token when present so `likedByMe` reflects the current user.
+    return request<MemoryListResponse[]>(`/api/memories/public?${query}`, {
+      auth: true,
+      signal,
+    })
+  },
+
   getMyMemories(signal?: AbortSignal) {
     return request<MemoryListResponse[]>('/api/memories/me', { auth: true, signal })
   },
@@ -122,7 +133,11 @@ export const api = {
   },
 
   getPublicMemoryDetail(memoryId: number, signal?: AbortSignal) {
-    return request<MemoryDetailResponse>(`/api/memories/public/${memoryId}`, { signal })
+    // Send the token when present so `likedByMe` reflects the current user.
+    return request<MemoryDetailResponse>(`/api/memories/public/${memoryId}`, {
+      auth: true,
+      signal,
+    })
   },
 
   createMemory(payload: MemoryCreateRequest) {
@@ -153,6 +168,22 @@ export const api = {
     return request<void>(`/api/memories/${memoryId}`, {
       method: 'DELETE',
       auth: true,
+    })
+  },
+
+  likeMemory(memoryId: number, signal?: AbortSignal) {
+    return request<LikeStatusResponse>(`/api/memories/${memoryId}/likes`, {
+      method: 'POST',
+      auth: true,
+      signal,
+    })
+  },
+
+  unlikeMemory(memoryId: number, signal?: AbortSignal) {
+    return request<LikeStatusResponse>(`/api/memories/${memoryId}/likes`, {
+      method: 'DELETE',
+      auth: true,
+      signal,
     })
   },
 }
