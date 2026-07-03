@@ -3,9 +3,9 @@ import './MemoriesPage.css'
 import './PublicMemoriesPage.css'
 import { GridIcon, ListIcon, MusicNoteIcon } from '../components/icons'
 import LikeButton from '../components/LikeButton'
-import ViewCount from '../components/t'
 import { api } from '../api/client'
 import type { MemoryListResponse, PublicMemorySort } from '../api/types'
+import ViewCount from '../components/ViewCount'
 
 // Memories per page in the grid/list; more than this shows pagination.
 const PAGE_SIZE = 6
