@@ -201,12 +201,22 @@
   align-items: center;
   gap: 14px;
 }
+.detail-date-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
 .detail-date {
   font-size: 12px;
   color: #a1a1a1;
   letter-spacing: 2.4px;
   text-transform: uppercase;
   white-space: nowrap;
+}
+.detail-lock {
+  display: inline-flex;
+  align-items: center;
+  color: #a1a1a1;
 }
 .detail-date-divider {
   flex: 1;

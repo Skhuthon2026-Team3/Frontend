@@ -438,7 +438,14 @@ export default function MemoryDetailPage({
         {/* Right: narrative content */}
         <div className="detail-narrative">
           <div className="detail-date-row">
-            <span className="detail-date">{formatDate(memory.createdAt)}</span>
+            <span className="detail-date-group">
+              <span className="detail-date">{formatDate(memory.createdAt)}</span>
+              {!memory.isPublic && (
+                <span className="detail-lock" aria-label="비공개">
+                  <LockIcon size={13} />
+                </span>
+              )}
+            </span>
             <span className="detail-date-divider" />
             {!editing && memory.isPublic && (
               <span className="detail-stats">
