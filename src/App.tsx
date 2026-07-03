@@ -96,7 +96,11 @@ function App() {
           />
         )}
         {route === 'mypage' && (
-          <MyPage onViewMemories={() => navigate('memories')} onLogout={handleLogout} />
+          <MyPage
+            onViewMemories={() => navigate('memories')}
+            onOpenMemory={(id) => openPublicMemory(id, 'home')}
+            onLogout={handleLogout}
+          />
         )}
         {route === 'memoryDetail' && (
           <MemoryDetailPage

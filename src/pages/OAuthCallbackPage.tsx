@@ -36,6 +36,19 @@ function completeLogin(): boolean {
     email: env.email ?? getParam(['email', 'mail']),
     nickname: env.nickname ?? getParam(['nickname', 'name', 'username']),
     provider: env.provider ?? getParam(['provider', 'registrationId']),
+    profileImage:
+      env.profileImage ??
+      getParam([
+        'profileImage',
+        'profileImageUrl',
+        'picture',
+        'imageUrl',
+        'image',
+        'avatar',
+        'avatarUrl',
+        'profile_image_url',
+        'thumbnailImage',
+      ]),
   })
   setToken(env.accessToken)
   return true

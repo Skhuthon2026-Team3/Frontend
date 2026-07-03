@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import './Nav.css'
 import { AvatarIcon } from './icons'
 import RealtimeRanking from './RealtimeRanking'
+import { getUserProfile } from '../auth'
 import { routeToPath, type Route } from '../router'
 
 type Props = {
@@ -49,6 +50,8 @@ export default function Nav({
   // Close the menu whenever we navigate to a new page.
   useEffect(() => setMenuOpen(false), [route])
 
+  const avatarImage = isAuthenticated ? getUserProfile().profileImage : null
+
   return (
     <header className="nav">
       <div className={`nav-inner${isAuthenticated ? '' : ' nav-inner-guest'}`}>
@@ -82,13 +85,20 @@ export default function Nav({
           <div className="nav-rank">
             <RealtimeRanking onOpenMemory={onOpenMemory} />
           </div>
-          {/* Mobile-only shortcut to 나의 추억 (nav-links are hidden on phones). */}
+          {/* Mobile-only shortcuts (nav-links are hidden on phones). */}
           <button
             type="button"
             className={`nav-my${route === 'memories' || route === 'create' ? ' is-active' : ''}`}
             onClick={() => onNavigate('memories')}
           >
             나의 추억
+          </button>
+          <button
+            type="button"
+            className={`nav-everyone${route === 'publicMemories' ? ' is-active' : ''}`}
+            onClick={() => onNavigate('publicMemories')}
+          >
+            모두의 추억
           </button>
           <button
             type="button"
@@ -107,7 +117,11 @@ export default function Nav({
                 aria-expanded={menuOpen}
                 aria-label="프로필 메뉴"
               >
-                <AvatarIcon />
+                {avatarImage ? (
+                  <img src={avatarImage} alt="" className="avatar-img" />
+                ) : (
+                  <AvatarIcon />
+                )}
               </button>
               {menuOpen && (
                 <div className="nav-menu" role="menu">
