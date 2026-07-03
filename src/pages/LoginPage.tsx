@@ -73,10 +73,6 @@ export default function LoginPage({ onBack }: Props) {
         <button type="button" className="login-skip" onClick={onBack}>
           둘러보기
         </button>
-
-        <p className="login-terms">
-          로그인 시 서비스 이용약관 및 개인정보 처리방침에 동의하게 됩니다.
-        </p>
       </div>
     </div>
   )

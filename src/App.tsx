@@ -116,6 +116,7 @@ function App() {
               navigate('create')
             }}
             onRequireLogin={() => navigate('login')}
+            onGoPublic={() => navigate('publicMemories')}
           />
         )}
       </main>

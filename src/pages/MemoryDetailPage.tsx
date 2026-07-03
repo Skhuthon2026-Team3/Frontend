@@ -52,6 +52,8 @@ type Props = {
   onDeleted?: () => void
   /** Called when a signed-out user tries to like (redirect to login). */
   onRequireLogin?: () => void
+  /** Public view: breadcrumb link to the 모두의 추억 list. */
+  onGoPublic?: () => void
 }
 
 export default function MemoryDetailPage({
@@ -61,6 +63,7 @@ export default function MemoryDetailPage({
   onRecord,
   onDeleted,
   onRequireLogin,
+  onGoPublic,
 }: Props) {
   const { isAuthenticated } = useAuth()
   const [memory, setMemory] = useState<MemoryDetailResponse | null>(null)
@@ -352,15 +355,17 @@ export default function MemoryDetailPage({
 
   return (
     <div className="detail-page">
-      {owner && (
-        <nav className="detail-breadcrumb" aria-label="위치">
-          <button type="button" className="detail-crumb-link" onClick={onBack}>
-            나의 추억
-          </button>
-          <ChevronRightIcon size={10} />
-          <span className="detail-crumb-current">{memory.trackName}</span>
-        </nav>
-      )}
+      <nav className="detail-breadcrumb" aria-label="위치">
+        <button
+          type="button"
+          className="detail-crumb-link"
+          onClick={owner ? onBack : onGoPublic ?? onBack}
+        >
+          {owner ? '나의 추억' : '모두의 추억'}
+        </button>
+        <ChevronRightIcon size={10} />
+        <span className="detail-crumb-current">{memory.trackName}</span>
+      </nav>
 
       <div className="detail-grid">
         {/* Left: visual content */}

@@ -14,10 +14,12 @@ import { downloadMemoryImage } from '../memoryCard'
 import StoryShareButton from '../components/StoryShareButton'
 import type { MemoryListResponse } from '../api/types'
 
-function formatYearMonth(iso: string): string {
+function formatDate(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return ''
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(
+    d.getDate(),
+  ).padStart(2, '0')}`
 }
 
 type Props = {
@@ -109,7 +111,7 @@ export default function MemoryCreatedPage({
 
         <div className="created-card-body">
           <div className="created-card-text">
-            <span className="created-eyebrow">{formatYearMonth(memory.createdAt)} 기록됨</span>
+            <span className="created-eyebrow">{formatDate(memory.createdAt)} 기록됨</span>
             <h2 className="created-card-title">“{memory.title}”</h2>
           </div>
 
