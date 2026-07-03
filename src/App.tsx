@@ -127,7 +127,6 @@ function App() {
         )}
         {route === 'mypage' && !guarded && (
           <MyPage
-            onViewMemories={() => navigate('memories')}
             onOpenMemory={(id) => openPublicMemory(id, 'home')}
             onLogout={handleLogout}
           />

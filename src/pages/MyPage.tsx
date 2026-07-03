@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import './MyPage.css'
-import { AvatarIcon, ArrowRightIcon, MusicNoteIcon } from '../components/icons'
-import { api, ApiError } from '../api/client'
+import { AvatarIcon, HeartIcon, MusicNoteIcon } from '../components/icons'
+import { api } from '../api/client'
 import { getUserProfile } from '../auth'
-import type { MyCommentResponse } from '../api/types'
+import type { MemoryListResponse, MyCommentResponse } from '../api/types'
 
 function formatDate(iso: string): string {
   const d = new Date(iso)
@@ -13,20 +13,8 @@ function formatDate(iso: string): string {
   ).padStart(2, '0')}`
 }
 
-type Props = {
-  onViewMemories: () => void
-  onOpenMemory: (memoryId: number) => void
-  onLogout: () => void
-}
-
-const LANG_KEY = 'preferredLang'
-const LANGUAGES = [
-  { value: 'ko', label: '한국어' },
-  { value: 'en', label: 'English' },
-]
-
-// Comments per page in the 나의 댓글 list; more than this shows pagination.
-const COMMENTS_PER_PAGE = 6
+// Items per page in the 좋아요한 추억 / 나의 댓글 lists; more than this paginates.
+const PER_PAGE = 6
 
 function providerLabel(provider: string | null): string {
   if (provider === 'google') return 'Google 계정'
@@ -35,10 +23,16 @@ function providerLabel(provider: string | null): string {
   return '소셜 로그인'
 }
 
-export default function MyPage({ onViewMemories, onOpenMemory, onLogout }: Props) {
+type Props = {
+  onOpenMemory: (memoryId: number) => void
+  onLogout: () => void
+}
+
+export default function MyPage({ onOpenMemory, onLogout }: Props) {
   const profile = getUserProfile()
-  const [count, setCount] = useState<number | null>(null)
-  const [lang, setLang] = useState(() => localStorage.getItem(LANG_KEY) ?? 'ko')
+  const [liked, setLiked] = useState<MemoryListResponse[]>([])
+  const [likedLoading, setLikedLoading] = useState(true)
+  const [likedPage, setLikedPage] = useState(1)
   const [comments, setComments] = useState<MyCommentResponse[]>([])
   const [commentsLoading, setCommentsLoading] = useState(true)
   const [deletingId, setDeletingId] = useState<number | null>(null)
@@ -46,15 +40,18 @@ export default function MyPage({ onViewMemories, onOpenMemory, onLogout }: Props
   // memoryId → album artwork (the my-comments API doesn't include it).
   const [artByMemory, setArtByMemory] = useState<Record<number, string>>({})
 
-  // Memory count for the 내 활동 section.
+  // Liked memories: the backend has no dedicated endpoint, so derive them from
+  // the public list (which carries `likedByMe` when authenticated).
   useEffect(() => {
     const controller = new AbortController()
+    setLikedLoading(true)
     api
-      .getMyMemories(controller.signal)
-      .then((list) => setCount(list.length))
-      .catch((err) => {
-        if (err instanceof ApiError || err?.name === 'AbortError') return
+      .getPublicMemories('recent', controller.signal)
+      .then((list) => setLiked(list.filter((m) => m.likedByMe)))
+      .catch(() => {
+        // Leave the list empty on error.
       })
+      .finally(() => setLikedLoading(false))
     return () => controller.abort()
   }, [])
 
@@ -107,18 +104,16 @@ export default function MyPage({ onViewMemories, onOpenMemory, onLogout }: Props
     }
   }
 
-  function handleLangChange(value: string) {
-    setLang(value)
-    localStorage.setItem(LANG_KEY, value)
-  }
+  const totalLikedPages = Math.max(1, Math.ceil(liked.length / PER_PAGE))
+  const pageLiked = liked.slice((likedPage - 1) * PER_PAGE, likedPage * PER_PAGE)
 
-  const totalCommentPages = Math.max(1, Math.ceil(comments.length / COMMENTS_PER_PAGE))
-  const pageComments = comments.slice(
-    (commentPage - 1) * COMMENTS_PER_PAGE,
-    commentPage * COMMENTS_PER_PAGE,
-  )
+  const totalCommentPages = Math.max(1, Math.ceil(comments.length / PER_PAGE))
+  const pageComments = comments.slice((commentPage - 1) * PER_PAGE, commentPage * PER_PAGE)
 
-  // Keep the page in range after deletions / reloads.
+  // Keep pages in range after deletions / reloads.
+  useEffect(() => {
+    if (likedPage > totalLikedPages) setLikedPage(totalLikedPages)
+  }, [likedPage, totalLikedPages])
   useEffect(() => {
     if (commentPage > totalCommentPages) setCommentPage(totalCommentPages)
   }, [commentPage, totalCommentPages])
@@ -157,43 +152,86 @@ export default function MyPage({ onViewMemories, onOpenMemory, onLogout }: Props
         </div>
       </section>
 
-      {/* 환경설정 */}
+      {/* 좋아요한 추억 */}
       <section className="mypage-section">
-        <h2 className="mypage-section-title">환경설정</h2>
-        <div className="mypage-card">
-          <div className="mypage-row">
-            <span className="mypage-row-label">언어</span>
-            <select
-              className="mypage-select"
-              value={lang}
-              onChange={(e) => handleLangChange(e.target.value)}
-              aria-label="언어 선택"
-            >
-              {LANGUAGES.map((l) => (
-                <option key={l.value} value={l.value}>
-                  {l.label}
-                </option>
-              ))}
-            </select>
+        <h2 className="mypage-section-title">
+          좋아요한 추억{liked.length > 0 && ` (${liked.length})`}
+        </h2>
+        {likedLoading ? (
+          <p className="mypage-empty">불러오는 중…</p>
+        ) : liked.length === 0 ? (
+          <p className="mypage-empty">아직 좋아요한 추억이 없습니다.</p>
+        ) : (
+          <div className="mypage-card">
+            {pageLiked.map((m) => (
+              <div key={m.memoryId} className="mypage-comment">
+                <button
+                  type="button"
+                  className="mypage-comment-main"
+                  onClick={() => onOpenMemory(m.memoryId)}
+                >
+                  <span className="mypage-comment-art" aria-hidden="true">
+                    {m.artworkUrl ? (
+                      <img src={m.artworkUrl} alt="" />
+                    ) : (
+                      <MusicNoteIcon size={18} />
+                    )}
+                  </span>
+                  <span className="mypage-comment-body">
+                    <span className="mypage-comment-text">{m.title}</span>
+                    <span className="mypage-comment-meta">
+                      <span className="mypage-comment-song">
+                        {m.trackName} · {m.artistName}
+                      </span>
+                      <span className="mypage-comment-date">{formatDate(m.createdAt)}</span>
+                    </span>
+                  </span>
+                </button>
+                <span
+                  className="mypage-like-count"
+                  aria-label={`좋아요 ${m.likeCount ?? 0}개`}
+                >
+                  <HeartIcon size={14} filled />
+                  {m.likeCount ?? 0}
+                </span>
+              </div>
+            ))}
           </div>
-        </div>
-      </section>
+        )}
 
-      {/* 내 활동 */}
-      <section className="mypage-section">
-        <h2 className="mypage-section-title">내 활동</h2>
-        <button type="button" className="mypage-activity" onClick={onViewMemories}>
-          <span className="mypage-activity-icon" aria-hidden="true">
-            <MusicNoteIcon size={20} />
-          </span>
-          <span className="mypage-activity-text">
-            <span className="mypage-activity-title">나의 추억 전체보기</span>
-            <span className="mypage-activity-sub">
-              {count == null ? '기록한 추억을 모아봅니다' : `${count}개의 추억을 기록했어요`}
-            </span>
-          </span>
-          <ArrowRightIcon size={16} />
-        </button>
+        {totalLikedPages > 1 && (
+          <nav className="mypage-pagination" aria-label="좋아요한 추억 페이지 이동">
+            <button
+              type="button"
+              className="page-btn"
+              onClick={() => setLikedPage((p) => Math.max(1, p - 1))}
+              disabled={likedPage === 1}
+              aria-label="이전 페이지"
+            >
+              ‹
+            </button>
+            {Array.from({ length: totalLikedPages }, (_, i) => i + 1).map((n) => (
+              <button
+                key={n}
+                type="button"
+                className={`page-btn${n === likedPage ? ' is-active' : ''}`}
+                aria-current={n === likedPage ? 'page' : undefined}
+                onClick={() => setLikedPage(n)}
+              >
+                {n}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="page-btn"
+              onClick={() => setLikedPage((p) => Math.min(totalLikedPages, p + 1))}
+              disabled={likedPage === totalLikedPages}
+              aria-label="다음 페이지"
+            >
+              ›
+            </button>
+          </nav>
+        )}
       </section>
 
       {/* 나의 댓글 */}
