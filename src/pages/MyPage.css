@@ -26,6 +26,12 @@
   justify-content: center;
   overflow: hidden;
 }
+.mypage-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
 .mypage-head-text {
   min-width: 0;
 }
@@ -155,10 +161,142 @@
   color: var(--mt-text-4);
 }
 
-.mypage-logout {
-  align-self: flex-start;
+/* 나의 댓글 */
+.mypage-empty {
+  margin: 0;
+  padding: 20px 22px;
+  font-size: 14px;
+  color: var(--mt-text-4);
+  border: 1px solid var(--mt-border);
+  border-radius: 18px;
+  background: var(--mt-surface);
+}
+
+.mypage-comment {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 22px;
+}
+.mypage-comment + .mypage-comment {
+  border-top: 1px solid var(--mt-border-soft);
+}
+
+.mypage-comment-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.mypage-comment-art {
+  flex-shrink: 0;
+  width: 48px;
   height: 48px;
-  padding: 0 24px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--mt-surface-2);
+  border: 1px solid var(--mt-border);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--mt-text-4);
+}
+.mypage-comment-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mypage-comment-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mypage-comment-text {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--mt-text);
+  word-break: break-word;
+}
+.mypage-comment-main:hover .mypage-comment-text {
+  color: #000;
+}
+
+.mypage-comment-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--mt-text-4);
+}
+.mypage-comment-meta svg {
+  flex-shrink: 0;
+}
+.mypage-comment-song {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--mt-text-3);
+  font-weight: 600;
+}
+.mypage-comment-date {
+  flex-shrink: 0;
+  letter-spacing: 0.3px;
+}
+.mypage-comment-date::before {
+  content: '·';
+  margin-right: 8px;
+  color: var(--mt-text-5);
+}
+
+.mypage-comment-delete {
+  flex-shrink: 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--mt-text-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+}
+.mypage-comment-delete:hover:not(:disabled) {
+  color: #ef4444;
+  background: #fef2f2;
+}
+.mypage-comment-delete:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.mypage-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.mypage-logout {
+  margin-left: auto;
+  flex-shrink: 0;
+  align-self: center;
+  height: 44px;
+  padding: 0 20px;
   border: 1px solid var(--mt-border);
   border-radius: 14px;
   background: #fff;
@@ -183,6 +321,7 @@
     font-size: 22px;
   }
   .mypage-logout {
-    align-self: stretch;
+    padding: 0 14px;
+    font-size: 13px;
   }
 }
