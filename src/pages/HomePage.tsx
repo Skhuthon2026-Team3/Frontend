@@ -156,7 +156,7 @@ export default function HomePage({
         <p>
           특정한 순간보다 그 순간 들었던 노래를 더 오래 기억하곤 합니다.
           <br />
-          당신의 소중한 순간을 노래와 함께 기록하고, 언제든 다시 꺼내보세요.
+          당신의 이야기를 기록하고, 모두의 추억 속 서로의 순간에 공감해보세요.
         </p>
       </section>
 
@@ -218,109 +218,109 @@ export default function HomePage({
         {loadingMemories && !memoriesError && <p className="search-status">불러오는 중…</p>}
 
         <div className="memory-showcase">
-        <div className="memory-carousel">
-          {totalMemPages > 1 && (
-            <button
-              type="button"
-              className="carousel-arrow"
-              onClick={goPrev}
-              disabled={memPage === 1}
-              aria-label="이전 추억"
-            >
-              <ArrowLeftIcon />
-            </button>
-          )}
+          <div className="memory-carousel">
+            {totalMemPages > 1 && (
+              <button
+                type="button"
+                className="carousel-arrow"
+                onClick={goPrev}
+                disabled={memPage === 1}
+                aria-label="이전 추억"
+              >
+                <ArrowLeftIcon />
+              </button>
+            )}
 
-          <div className="memory-grid" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-            {pageSlots.map((slot) =>
-              slot.kind === 'card' ? (
-                <article
-                  key={slot.card.memoryId}
-                  className="memory-card memory-card-clickable"
-                  onClick={() => onOpenMemory(slot.card.memoryId)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      onOpenMemory(slot.card.memoryId)
-                    }
-                  }}
-                >
-                  <div className="memory-image" aria-hidden="true">
-                    {slot.card.artworkUrl ? (
-                      <img src={slot.card.artworkUrl} alt="" className="memory-image-img" />
-                    ) : (
-                      <ImagePlaceholderIcon />
-                    )}
-                  </div>
-                  <h3 className="memory-title">{slot.card.title}</h3>
-                  <footer className="memory-foot">
-                    <div className="memory-song-icon" aria-hidden="true">
-                      <MusicNoteIcon size={14} />
+            <div className="memory-grid" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+              {pageSlots.map((slot) =>
+                slot.kind === 'card' ? (
+                  <article
+                    key={slot.card.memoryId}
+                    className="memory-card memory-card-clickable"
+                    onClick={() => onOpenMemory(slot.card.memoryId)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        onOpenMemory(slot.card.memoryId)
+                      }
+                    }}
+                  >
+                    <div className="memory-image" aria-hidden="true">
+                      {slot.card.artworkUrl ? (
+                        <img src={slot.card.artworkUrl} alt="" className="memory-image-img" />
+                      ) : (
+                        <ImagePlaceholderIcon />
+                      )}
                     </div>
-                    <span className="memory-song-label">
-                      {slot.card.trackName} - {slot.card.artistName}
+                    <h3 className="memory-title">{slot.card.title}</h3>
+                    <footer className="memory-foot">
+                      <div className="memory-song-icon" aria-hidden="true">
+                        <MusicNoteIcon size={14} />
+                      </div>
+                      <span className="memory-song-label">
+                        {slot.card.trackName} - {slot.card.artistName}
+                      </span>
+                      <span className="memory-foot-stats">
+                        <ViewCount count={slot.card.viewCount} />
+                        <LikeButton
+                          memoryId={slot.card.memoryId}
+                          initialCount={slot.card.likeCount ?? 0}
+                          initialLiked={slot.card.likedByMe ?? false}
+                          onRequireLogin={onRequireLogin}
+                        />
+                      </span>
+                    </footer>
+                  </article>
+                ) : (
+                  <button
+                    key="cta"
+                    type="button"
+                    className="memory-card memory-card-cta"
+                    onClick={onCreate}
+                  >
+                    <span className="memory-cta-icon" aria-hidden="true">
+                      <PlusIcon />
                     </span>
-                    <span className="memory-foot-stats">
-                      <ViewCount count={slot.card.viewCount} />
-                      <LikeButton
-                        memoryId={slot.card.memoryId}
-                        initialCount={slot.card.likeCount ?? 0}
-                        initialLiked={slot.card.likedByMe ?? false}
-                        onRequireLogin={onRequireLogin}
-                      />
+                    <span className="memory-cta-title">나의 추억 기록하기</span>
+                    <span className="memory-cta-sub">
+                      당신의 노래에 담긴
+                      <br />
+                      이야기를 남겨보세요.
                     </span>
-                  </footer>
-                </article>
-              ) : (
-                <button
-                  key="cta"
-                  type="button"
-                  className="memory-card memory-card-cta"
-                  onClick={onCreate}
-                >
-                  <span className="memory-cta-icon" aria-hidden="true">
-                    <PlusIcon />
-                  </span>
-                  <span className="memory-cta-title">나의 추억 기록하기</span>
-                  <span className="memory-cta-sub">
-                    당신의 노래에 담긴
-                    <br />
-                    이야기를 남겨보세요.
-                  </span>
-                </button>
-              ),
+                  </button>
+                ),
+              )}
+            </div>
+
+            {totalMemPages > 1 && (
+              <button
+                type="button"
+                className="carousel-arrow"
+                onClick={goNext}
+                disabled={memPage === totalMemPages}
+                aria-label="다음 추억"
+              >
+                <ArrowRightIcon />
+              </button>
             )}
           </div>
 
           {totalMemPages > 1 && (
-            <button
-              type="button"
-              className="carousel-arrow"
-              onClick={goNext}
-              disabled={memPage === totalMemPages}
-              aria-label="다음 추억"
-            >
-              <ArrowRightIcon />
-            </button>
+            <div className="carousel-dots" role="tablist" aria-label="추억 페이지">
+              {Array.from({ length: totalMemPages }, (_, i) => i + 1).map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  className={`carousel-dot${n === memPage ? ' is-active' : ''}`}
+                  aria-label={`${n} / ${totalMemPages}`}
+                  aria-current={n === memPage ? 'true' : undefined}
+                  onClick={() => setMemPage(n)}
+                />
+              ))}
+            </div>
           )}
-        </div>
-
-        {totalMemPages > 1 && (
-          <div className="carousel-dots" role="tablist" aria-label="추억 페이지">
-            {Array.from({ length: totalMemPages }, (_, i) => i + 1).map((n) => (
-              <button
-                key={n}
-                type="button"
-                className={`carousel-dot${n === memPage ? ' is-active' : ''}`}
-                aria-label={`${n} / ${totalMemPages}`}
-                aria-current={n === memPage ? 'true' : undefined}
-                onClick={() => setMemPage(n)}
-              />
-            ))}
-          </div>
-        )}
         </div>
       </section>
     </>

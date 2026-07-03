@@ -28,6 +28,8 @@
   font-size: 16px;
   line-height: 24px;
   color: var(--mt-text-4);
+  /* Break only at spaces so a Korean word (and its 요) never splits mid-word. */
+  word-break: keep-all;
 }
 
 .footer-cols {

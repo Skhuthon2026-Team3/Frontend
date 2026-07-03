@@ -1,5 +1,4 @@
 import './Footer.css'
-import { InstagramIcon, TwitterIcon, YoutubeIcon } from './icons'
 import type { Route } from '../router'
 
 type Props = {
@@ -39,9 +38,9 @@ export default function Footer({ onNavigate, isAuthenticated }: Props) {
             Memory.Tune
           </button>
           <p className="footer-tagline">
-            노래로 기록하는 당신의 소중한 순간들. 모든 기억은
+            노래로 기록하는 당신의 소중한 순간들.
             <br />
-            멜로디와 함께 영원해집니다.
+            모두의 추억 속에서 서로의 멜로디에 공감하며 함께 나눠요.
           </p>
         </div>
 
@@ -65,29 +64,11 @@ export default function Footer({ onNavigate, isAuthenticated }: Props) {
               )}
             </ul>
           </div>
-          <div className="footer-col">
-            <h5>SOCIAL</h5>
-            <div className="social-row">
-              <a href="#instagram" aria-label="Instagram">
-                <InstagramIcon />
-              </a>
-              <a href="#twitter" aria-label="Twitter">
-                <TwitterIcon />
-              </a>
-              <a href="#youtube" aria-label="YouTube">
-                <YoutubeIcon />
-              </a>
-            </div>
-          </div>
         </div>
       </div>
 
       <div className="footer-bottom">
         <span>© 2026 Memory.Tune. All rights reserved.</span>
-        <div className="footer-legal">
-          <a href="#terms">이용약관</a>
-          <a href="#privacy">개인정보처리방침</a>
-        </div>
       </div>
     </footer>
   )
