@@ -261,6 +261,18 @@
   color: var(--mt-text-5);
 }
 
+/* Liked-memory heart badge (right side of a 좋아요한 추억 row). */
+.mypage-like-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #ef4444;
+  font-variant-numeric: tabular-nums;
+}
+
 .mypage-comment-delete {
   flex-shrink: 0;
   font: inherit;
