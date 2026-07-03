@@ -20,14 +20,20 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  max-width: 320px;
 }
 
 .footer-tagline {
   margin: 0;
-  font-size: 16px;
-  line-height: 24px;
+  /* Scale the text down on narrow viewports so each line always fits on one
+     line — the tagline stays exactly two lines at every width. */
+  font-size: clamp(11px, 3.3vw, 16px);
+  line-height: 1.5;
   color: var(--mt-text-4);
+}
+
+.footer-tagline-line {
+  display: block;
+  white-space: nowrap;
 }
 
 .footer-cols {

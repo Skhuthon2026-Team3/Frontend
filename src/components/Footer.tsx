@@ -39,9 +39,10 @@ export default function Footer({ onNavigate, isAuthenticated }: Props) {
             Memory.Tune
           </button>
           <p className="footer-tagline">
-            노래로 기록하는 당신의 소중한 순간들. 모든 기억은
-            <br />
-            멜로디와 함께 영원해집니다.
+            <span className="footer-tagline-line">
+              노래로 기록하는 당신의 소중한 순간들. 모든 기억은
+            </span>
+            <span className="footer-tagline-line">멜로디와 함께 영원해집니다.</span>
           </p>
         </div>
 
