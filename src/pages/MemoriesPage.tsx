@@ -19,7 +19,9 @@ const PAGE_SIZE = 6
 function formatDate(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return ''
-  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}`
+  return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(
+    d.getDate(),
+  ).padStart(2, '0')}`
 }
 
 type Props = {
@@ -51,6 +53,12 @@ export default function MemoriesPage({
       }
     },
   })
+
+  
+  function goToPage(n: number) {
+    setPage(n)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
 
   const load = useCallback((signal?: AbortSignal) => {
     setLoading(true)
@@ -266,7 +274,7 @@ export default function MemoriesPage({
           <button
             type="button"
             className="page-btn"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            onClick={() => goToPage(Math.max(1, page - 1))}
             disabled={page === 1}
             aria-label="이전 페이지"
           >
@@ -278,7 +286,7 @@ export default function MemoriesPage({
               type="button"
               className={`page-btn${n === page ? ' is-active' : ''}`}
               aria-current={n === page ? 'page' : undefined}
-              onClick={() => setPage(n)}
+              onClick={() => goToPage(n)}
             >
               {n}
             </button>
@@ -286,7 +294,7 @@ export default function MemoriesPage({
           <button
             type="button"
             className="page-btn"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            onClick={() => goToPage(Math.min(totalPages, page + 1))}
             disabled={page === totalPages}
             aria-label="다음 페이지"
           >
