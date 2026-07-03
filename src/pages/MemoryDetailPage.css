@@ -201,6 +201,11 @@
   align-items: center;
   gap: 14px;
 }
+.detail-lock {
+  display: inline-flex;
+  align-items: center;
+  color: #a1a1a1;
+}
 .detail-date {
   font-size: 12px;
   color: #a1a1a1;
