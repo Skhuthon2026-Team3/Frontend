@@ -1,0 +1,42 @@
+/* ===== Everyone's memories page — src/pages/PublicMemoriesPage.tsx ===== */
+
+/* Segmented sort control — shares the visual language of .view-toggle. */
+.sort-toggle {
+  display: flex;
+  gap: 0;
+  padding: 4px;
+  background: var(--mt-surface-2);
+  border-radius: 12px;
+}
+
+.sort-btn {
+  font: inherit;
+  height: 40px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--mt-text-4);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.sort-btn:hover {
+  color: var(--mt-text);
+}
+
+.sort-btn.is-active {
+  background: var(--mt-surface);
+  color: var(--mt-text);
+  box-shadow:
+    0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px -1px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 700px) {
+  .sort-btn {
+    padding: 0 14px;
+  }
+}

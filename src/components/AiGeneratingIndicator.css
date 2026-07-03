@@ -1,0 +1,187 @@
+/* ===== AI generating indicator — src/components/AiGeneratingIndicator.tsx ===== */
+.ai-generating {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 4px;
+  padding: 22px 24px 24px;
+  border: 1px solid var(--mt-border);
+  border-radius: 18px;
+  background: var(--mt-surface-3);
+  overflow: hidden;
+  animation: ai-gen-in 0.25s ease;
+}
+
+@keyframes ai-gen-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Indeterminate progress bar sliding across the top edge. */
+.ai-generating-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  width: 40%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, transparent, #171717, transparent);
+  animation: ai-gen-sweep 1.4s ease-in-out infinite;
+}
+
+@keyframes ai-gen-sweep {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+.ai-generating-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Pulsing orb with an expanding ring. */
+.ai-generating-orb {
+  position: relative;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #171717;
+  animation: ai-gen-pulse 1.6s ease-in-out infinite;
+}
+.ai-generating-orb-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #171717;
+  animation: ai-gen-ring 1.6s ease-out infinite;
+}
+
+@keyframes ai-gen-pulse {
+  0%, 100% {
+    transform: scale(0.9);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes ai-gen-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.9);
+    opacity: 0;
+  }
+}
+
+.ai-generating-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+}
+.ai-generating-head-text strong {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--mt-text);
+  letter-spacing: -0.3px;
+}
+.ai-generating-head-text span {
+  font-size: 13px;
+  color: var(--mt-text-3);
+  letter-spacing: -0.2px;
+}
+.ai-generating-timer {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--mt-text-4);
+  align-self: flex-start;
+}
+
+.ai-generating-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ai-step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+.ai-step.is-pending {
+  color: var(--mt-text-5);
+  opacity: 0.7;
+}
+.ai-step.is-active {
+  color: var(--mt-text);
+  font-weight: 600;
+}
+.ai-step.is-done {
+  color: var(--mt-text-3);
+}
+
+.ai-step-mark {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #fff;
+}
+.ai-step.is-done .ai-step-mark {
+  background: #171717;
+}
+.ai-step.is-active .ai-step-mark {
+  background: transparent;
+}
+.ai-step.is-pending .ai-step-mark {
+  background: transparent;
+}
+
+.ai-step-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--mt-border);
+  border-top-color: #171717;
+  border-radius: 50%;
+  animation: ai-spin 0.7s linear infinite;
+}
+.ai-step-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--mt-border);
+}
+
+@keyframes ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

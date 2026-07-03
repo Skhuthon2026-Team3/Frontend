@@ -1,0 +1,188 @@
+/* ===== My page — src/pages/MyPage.tsx ===== */
+.mypage {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 64px 24px 96px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.mypage-head {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.mypage-avatar {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid var(--mt-border);
+  background: var(--mt-surface-2);
+  color: var(--mt-text-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.mypage-head-text {
+  min-width: 0;
+}
+.mypage-head-text h1 {
+  margin: 0 0 4px;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--mt-text);
+}
+.mypage-head-text p {
+  margin: 0;
+  font-size: 15px;
+  color: var(--mt-text-3);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mypage-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.mypage-section-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--mt-text-4);
+}
+
+.mypage-card {
+  border: 1px solid var(--mt-border);
+  border-radius: 18px;
+  background: var(--mt-surface);
+  overflow: hidden;
+}
+.mypage-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+}
+.mypage-row + .mypage-row {
+  border-top: 1px solid var(--mt-border-soft);
+}
+.mypage-row-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mt-text-3);
+}
+.mypage-row-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mt-text);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mypage-select {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--mt-text);
+  background: var(--mt-surface-3);
+  border: 1px solid var(--mt-border);
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
+.mypage-select:focus {
+  outline: none;
+  border-color: var(--mt-text-4);
+}
+
+/* 내 활동 */
+.mypage-activity {
+  font: inherit;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 18px 22px;
+  border: 1px solid var(--mt-border);
+  border-radius: 18px;
+  background: var(--mt-surface);
+  cursor: pointer;
+  color: var(--mt-text);
+  transition: border-color 0.2s, background 0.2s, transform 0.15s ease;
+}
+.mypage-activity:hover {
+  border-color: var(--mt-text-5);
+  background: var(--mt-surface-3);
+  transform: translateY(-1px);
+}
+.mypage-activity-icon {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--mt-surface-2);
+  color: var(--mt-text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.mypage-activity-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.mypage-activity-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--mt-text);
+}
+.mypage-activity-sub {
+  font-size: 13px;
+  color: var(--mt-text-4);
+}
+
+.mypage-logout {
+  align-self: flex-start;
+  height: 48px;
+  padding: 0 24px;
+  border: 1px solid var(--mt-border);
+  border-radius: 14px;
+  background: #fff;
+  color: #ef4444;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.mypage-logout:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+@media (max-width: 700px) {
+  .mypage {
+    padding: 40px 20px 72px;
+    gap: 32px;
+  }
+  .mypage-head-text h1 {
+    font-size: 22px;
+  }
+  .mypage-logout {
+    align-self: stretch;
+  }
+}
