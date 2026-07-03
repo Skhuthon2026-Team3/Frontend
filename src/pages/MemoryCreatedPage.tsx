@@ -11,6 +11,7 @@ import {
 import { api } from '../api/client'
 import { getCreatedMemory } from '../created'
 import { downloadMemoryImage } from '../memoryCard'
+import StoryShareButton from '../components/StoryShareButton'
 import type { MemoryListResponse } from '../api/types'
 
 function formatYearMonth(iso: string): string {
@@ -126,18 +127,28 @@ export default function MemoryCreatedPage({
       <div className="created-actions">
         <button
           type="button"
-          className="created-btn-dark"
+          className="created-btn-dark created-act-download"
           onClick={handleDownload}
           disabled={downloading}
         >
           <span>{downloading ? '이미지 만드는 중…' : '다운로드하기'}</span>
           <DownloadIcon size={14} />
         </button>
-        <button type="button" className="created-btn-dark" onClick={onBackToMemories}>
+        {/* Mobile-only: 인스타 스토리 공유 */}
+        <StoryShareButton memory={memory} />
+        <button
+          type="button"
+          className="created-btn-dark created-act-back"
+          onClick={onBackToMemories}
+        >
           <span>추억 돌아가기</span>
           <ArrowRightIcon size={14} />
         </button>
-        <button type="button" className="created-btn-outline" onClick={onCreateAnother}>
+        <button
+          type="button"
+          className="created-btn-outline created-act-again"
+          onClick={onCreateAnother}
+        >
           다른 추억 기록하기
         </button>
       </div>

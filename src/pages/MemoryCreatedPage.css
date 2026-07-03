@@ -274,4 +274,35 @@
   .created-suggest-grid {
     grid-template-columns: 1fr;
   }
+
+  /* Buttons: [다운로드하기 · 추억 돌아가기] / 다른 추억 기록하기 / 인스타 스토리 공유 */
+  .created-actions {
+    gap: 12px;
+    padding-top: 40px;
+  }
+  .created-btn-dark,
+  .created-btn-outline {
+    padding: 16px 18px;
+    font-size: 15px;
+    gap: 8px;
+    justify-content: center;
+  }
+  .created-act-download {
+    order: 1;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .created-act-back {
+    order: 2;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+  .created-act-again {
+    order: 3;
+    flex: 1 1 100%;
+  }
+  .created-actions .story-share {
+    order: 4;
+    flex: 1 1 100%;
+  }
 }

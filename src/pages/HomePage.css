@@ -114,6 +114,9 @@
 .song-cover {
   width: 64px;
   height: 64px;
+  /* Never let the flex row shrink the cover into a rectangle — keep it square. */
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
   background: var(--mt-border);
   border-radius: 8px;
   display: flex;
@@ -435,6 +438,11 @@
   .memory-grid {
     grid-template-columns: 1fr;
   }
+  /* Full-width single column → keep album art a uniform square. */
+  .memory-image {
+    aspect-ratio: 1 / 1;
+    height: auto;
+  }
   /* One full-width card per layer — keep the arrows compact so the card
      doesn't get squeezed, and let swiping do the rest. */
   .memory-carousel {
@@ -481,9 +489,6 @@
   .memory-card {
     padding: 24px;
     border-radius: 24px;
-  }
-  .memory-image {
-    height: 220px;
   }
 }
 
