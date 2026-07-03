@@ -16,6 +16,7 @@ import { downloadMemoryImage } from '../memoryCard'
 import StoryShareButton from '../components/StoryShareButton'
 import AiGeneratingIndicator from '../components/AiGeneratingIndicator'
 import LikeButton from '../components/LikeButton'
+import ViewCount from '../components/ViewCount'
 import CommentsSection from '../components/CommentsSection'
 import type { MemoryDetailResponse } from '../api/types'
 
@@ -437,13 +438,16 @@ export default function MemoryDetailPage({
             <span className="detail-date">{formatDate(memory.createdAt)}</span>
             <span className="detail-date-divider" />
             {!editing && memory.isPublic && (
-              <LikeButton
-                memoryId={memory.memoryId}
-                initialCount={memory.likeCount ?? 0}
-                initialLiked={memory.likedByMe ?? false}
-                onRequireLogin={onRequireLogin}
-                size="md"
-              />
+              <span className="detail-stats">
+                <ViewCount count={memory.viewCount} size="md" />
+                <LikeButton
+                  memoryId={memory.memoryId}
+                  initialCount={memory.likeCount ?? 0}
+                  initialLiked={memory.likedByMe ?? false}
+                  onRequireLogin={onRequireLogin}
+                  size="md"
+                />
+              </span>
             )}
           </div>
 
