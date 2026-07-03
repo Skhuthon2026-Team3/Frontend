@@ -9,17 +9,46 @@ import OAuthCallbackPage from './pages/OAuthCallbackPage'
 import MemoryDetailPage from './pages/MemoryDetailPage'
 import MemoryCreatedPage from './pages/MemoryCreatedPage'
 import MyPage from './pages/MyPage'
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { type Route, useRouter } from './router'
 import { setToken, useAuth } from './auth'
 import { setPrefillSong } from './prefill'
 import './App.css'
 
+// Routes that require a logged-in user. Navigating to any of these while
+// unauthenticated (via a button, the home CTA, or a direct URL) is redirected
+// to the login screen.
+const PROTECTED_ROUTES: Route[] = ['create', 'createSuccess', 'mypage', 'myMemoryDetail']
+
 function App() {
-  const { route, memoryId, navigate } = useRouter()
+  const { route, memoryId, navigate: rawNavigate } = useRouter()
   const { isAuthenticated } = useAuth()
   // Where a public memory detail should return to (home vs. 모두의 추억).
   const [detailOrigin, setDetailOrigin] = useState<Route>('home')
+
+  // Guarded navigation: any attempt to reach a login-only route while logged
+  // out lands on the login screen instead.
+  const navigate = useCallback(
+    (next: Route, id?: number) => {
+      if (!isAuthenticated && PROTECTED_ROUTES.includes(next)) {
+        rawNavigate('login')
+        return
+      }
+      rawNavigate(next, id)
+    },
+    [isAuthenticated, rawNavigate],
+  )
+
+  // Catch protected routes opened directly by URL (or when auth is lost, e.g. an
+  // expired token) — redirect those to the login screen too.
+  useEffect(() => {
+    if (!isAuthenticated && PROTECTED_ROUTES.includes(route)) {
+      rawNavigate('login')
+    }
+  }, [isAuthenticated, route, rawNavigate])
+
+  // While the redirect effect above runs, don't flash the protected page.
+  const guarded = !isAuthenticated && PROTECTED_ROUTES.includes(route)
 
   const openPublicMemory = (id: number, origin: Route) => {
     setDetailOrigin(origin)
@@ -58,7 +87,7 @@ function App() {
             onRequireLogin={() => navigate('login')}
           />
         )}
-        {route === 'login' && (
+        {(route === 'login' || guarded) && (
           <LoginPage onBack={() => navigate('home')} onLoggedIn={() => navigate('memories')} />
         )}
         {route === 'memories' && (
@@ -74,20 +103,20 @@ function App() {
             onRequireLogin={() => navigate('login')}
           />
         )}
-        {route === 'create' && (
+        {route === 'create' && !guarded && (
           <CreateMemoryPage
             onBack={() => navigate('memories')}
             onCreated={() => navigate('createSuccess')}
           />
         )}
-        {route === 'createSuccess' && (
+        {route === 'createSuccess' && !guarded && (
           <MemoryCreatedPage
             onBackToMemories={() => navigate('memories')}
             onCreateAnother={() => navigate('create')}
             onOpenMemory={(id) => navigate('memoryDetail', id)}
           />
         )}
-        {route === 'myMemoryDetail' && (
+        {route === 'myMemoryDetail' && !guarded && (
           <MemoryDetailPage
             memoryId={memoryId}
             owner
@@ -96,7 +125,7 @@ function App() {
             onRequireLogin={() => navigate('login')}
           />
         )}
-        {route === 'mypage' && (
+        {route === 'mypage' && !guarded && (
           <MyPage
             onViewMemories={() => navigate('memories')}
             onOpenMemory={(id) => openPublicMemory(id, 'home')}
