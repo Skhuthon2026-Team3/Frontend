@@ -9,8 +9,9 @@ import {
   SearchIcon,
 } from '../components/icons'
 import LikeButton from '../components/LikeButton'
+import ViewCount from '../components/ViewCount'
 import { api } from '../api/client'
-import type { MemoryDetailResponse, MusicSearchResponse } from '../api/types'
+import type { MemoryListResponse, MusicSearchResponse } from '../api/types'
 
 // Showcase carousel: up to 8 memories + a "나도 시도해보기" card as the final
 // slot. Desktop shows 3 per layer; mobile (single-column) shows 1 per layer.
@@ -36,7 +37,7 @@ export default function HomePage({
   const [searching, setSearching] = useState(false)
   const [searchError, setSearchError] = useState<string | null>(null)
 
-  const [memoryCards, setMemoryCards] = useState<MemoryDetailResponse[]>([])
+  const [memoryCards, setMemoryCards] = useState<MemoryListResponse[]>([])
   const [loadingMemories, setLoadingMemories] = useState(true)
   const [memoriesError, setMemoriesError] = useState<string | null>(null)
   const [memPage, setMemPage] = useState(1)
@@ -88,17 +89,12 @@ export default function HomePage({
     setLoadingMemories(true)
     setMemoriesError(null)
 
+    // Use the list response directly — fetching each memory's detail here would
+    // inflate the backend view count without an actual detail visit.
     api
       .getRecentPublicMemories(controller.signal)
-      .then((list) =>
-        Promise.all(
-          list.map((m) =>
-            api.getPublicMemoryDetail(m.memoryId, controller.signal).catch(() => null),
-          ),
-        ),
-      )
-      .then((details) => {
-        setMemoryCards(details.filter((d): d is MemoryDetailResponse => d !== null))
+      .then((list) => {
+        setMemoryCards(list)
       })
       .catch((err) => {
         if (err?.name === 'AbortError') return
@@ -123,7 +119,7 @@ export default function HomePage({
 
   // Memory cards (capped) followed by the "나도 시도해보기" call-to-action slot.
   const cards = memoryCards.slice(0, MAX_MEMORIES)
-  type Slot = { kind: 'card'; card: MemoryDetailResponse } | { kind: 'cta' }
+  type Slot = { kind: 'card'; card: MemoryListResponse } | { kind: 'cta' }
   const slots: Slot[] = [
     ...cards.map((card): Slot => ({ kind: 'card', card })),
     { kind: 'cta' },
@@ -259,7 +255,6 @@ export default function HomePage({
                     )}
                   </div>
                   <h3 className="memory-title">{slot.card.title}</h3>
-                  <p className="memory-body">{slot.card.content}</p>
                   <footer className="memory-foot">
                     <div className="memory-song-icon" aria-hidden="true">
                       <MusicNoteIcon size={14} />
@@ -267,12 +262,15 @@ export default function HomePage({
                     <span className="memory-song-label">
                       {slot.card.trackName} - {slot.card.artistName}
                     </span>
-                    <LikeButton
-                      memoryId={slot.card.memoryId}
-                      initialCount={slot.card.likeCount ?? 0}
-                      initialLiked={slot.card.likedByMe ?? false}
-                      onRequireLogin={onRequireLogin}
-                    />
+                    <span className="memory-foot-stats">
+                      <ViewCount count={slot.card.viewCount} />
+                      <LikeButton
+                        memoryId={slot.card.memoryId}
+                        initialCount={slot.card.likeCount ?? 0}
+                        initialLiked={slot.card.likedByMe ?? false}
+                        onRequireLogin={onRequireLogin}
+                      />
+                    </span>
                   </footer>
                 </article>
               ) : (

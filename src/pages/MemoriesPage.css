@@ -138,7 +138,14 @@
 .m-card-top-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+}
+
+/* View-count + like group (grid header uses space-between; list pushes right). */
+.m-card-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .m-card-date {
@@ -375,7 +382,7 @@
   gap: 12px;
 }
 
-.m-row-head .like-btn {
+.m-row-head .m-card-stats {
   margin-left: auto;
 }
 

@@ -3,8 +3,9 @@ import './MemoriesPage.css'
 import './PublicMemoriesPage.css'
 import { GridIcon, ListIcon, MusicNoteIcon } from '../components/icons'
 import LikeButton from '../components/LikeButton'
+import ViewCount from '../components/t'
 import { api } from '../api/client'
-import type { MemoryDetailResponse, PublicMemorySort } from '../api/types'
+import type { MemoryListResponse, PublicMemorySort } from '../api/types'
 
 // Memories per page in the grid/list; more than this shows pagination.
 const PAGE_SIZE = 6
@@ -26,7 +27,7 @@ type Props = {
 }
 
 export default function PublicMemoriesPage({ onOpenMemory, onRequireLogin }: Props) {
-  const [memories, setMemories] = useState<MemoryDetailResponse[]>([])
+  const [memories, setMemories] = useState<MemoryListResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -50,15 +51,12 @@ export default function PublicMemoriesPage({ onOpenMemory, onRequireLogin }: Pro
     setLoading(true)
     setError(null)
 
+    // Use the list response directly — fetching each memory's detail here would
+    // inflate the backend view count without an actual detail visit.
     api
       .getPublicMemories(currentSort, signal)
-      .then((list) =>
-        Promise.all(
-          list.map((m) => api.getPublicMemoryDetail(m.memoryId, signal).catch(() => null)),
-        ),
-      )
-      .then((details) => {
-        setMemories(details.filter((d): d is MemoryDetailResponse => d !== null))
+      .then((list) => {
+        setMemories(list)
       })
       .catch((err) => {
         if (err?.name === 'AbortError') return
@@ -141,12 +139,15 @@ export default function PublicMemoriesPage({ onOpenMemory, onRequireLogin }: Pro
             <article key={m.memoryId} className="m-card m-card-clickable" {...openProps(m.memoryId)}>
               <header className="m-card-top">
                 <span className="m-card-date">{formatDate(m.createdAt)}</span>
-                <LikeButton
-                  memoryId={m.memoryId}
-                  initialCount={m.likeCount ?? 0}
-                  initialLiked={m.likedByMe ?? false}
-                  onRequireLogin={onRequireLogin}
-                />
+                <span className="m-card-stats">
+                  <ViewCount count={m.viewCount} />
+                  <LikeButton
+                    memoryId={m.memoryId}
+                    initialCount={m.likeCount ?? 0}
+                    initialLiked={m.likedByMe ?? false}
+                    onRequireLogin={onRequireLogin}
+                  />
+                </span>
               </header>
 
               <div
@@ -172,7 +173,6 @@ export default function PublicMemoriesPage({ onOpenMemory, onRequireLogin }: Pro
 
               <div className="m-card-body">
                 <h3 className="m-title">{m.title}</h3>
-                <p className="m-text">{m.content}</p>
               </div>
             </article>
           ))}
@@ -196,16 +196,20 @@ export default function PublicMemoriesPage({ onOpenMemory, onRequireLogin }: Pro
               <div className="m-row-main">
                 <div className="m-row-head">
                   <span className="m-card-date">{formatDate(m.createdAt)}</span>
-                  <LikeButton
-                    memoryId={m.memoryId}
-                    initialCount={m.likeCount ?? 0}
-                    initialLiked={m.likedByMe ?? false}
-                    onRequireLogin={onRequireLogin}
-                  />
+                  <span className="m-card-stats">
+                    <ViewCount count={m.viewCount} />
+                    <LikeButton
+                      memoryId={m.memoryId}
+                      initialCount={m.likeCount ?? 0}
+                      initialLiked={m.likedByMe ?? false}
+                      onRequireLogin={onRequireLogin}
+                    />
+                  </span>
                 </div>
-                <h3 className="m-row-song">{m.trackName}</h3>
-                <span className="m-row-artist">{m.artistName}</span>
-                <p className="m-row-text">{m.content}</p>
+                <h3 className="m-row-song">{m.title}</h3>
+                <span className="m-row-artist">
+                  {m.trackName} · {m.artistName}
+                </span>
               </div>
             </article>
           ))}

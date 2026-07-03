@@ -8,9 +8,10 @@ import {
   PlusIcon,
 } from '../components/icons'
 import LikeButton from '../components/LikeButton'
+import ViewCount from '../components/ViewCount'
 import { api, ApiError } from '../api/client'
 import { loginWithGoogle, loginWithKakao } from '../auth'
-import type { MemoryDetailResponse } from '../api/types'
+import type { MemoryListResponse } from '../api/types'
 
 // Memories per page in the grid/list; more than this shows pagination.
 const PAGE_SIZE = 6
@@ -32,7 +33,7 @@ export default function MemoriesPage({
   onAddNew,
   onOpenMemory,
 }: Props) {
-  const [memories, setMemories] = useState<MemoryDetailResponse[]>([])
+  const [memories, setMemories] = useState<MemoryListResponse[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [view, setView] = useState<'grid' | 'list'>('grid')
@@ -55,15 +56,12 @@ export default function MemoriesPage({
     setLoading(true)
     setError(null)
 
+    // Use the list response directly — fetching each memory's detail here would
+    // trigger the backend's view-count increment without an actual detail visit.
     api
       .getMyMemories(signal)
-      .then((list) =>
-        Promise.all(
-          list.map((m) => api.getMyMemoryDetail(m.memoryId, signal).catch(() => null)),
-        ),
-      )
-      .then((details) => {
-        setMemories(details.filter((d): d is MemoryDetailResponse => d !== null))
+      .then((list) => {
+        setMemories(list)
       })
       .catch((err) => {
         if (err?.name === 'AbortError') return
@@ -153,11 +151,14 @@ export default function MemoriesPage({
                 <span className="m-card-date">{formatDate(m.createdAt)}</span>
                 <div className="m-card-top-right">
                   {m.isPublic ? (
-                    <LikeButton
-                      memoryId={m.memoryId}
-                      initialCount={m.likeCount ?? 0}
-                      initialLiked={m.likedByMe ?? false}
-                    />
+                    <>
+                      <ViewCount count={m.viewCount} />
+                      <LikeButton
+                        memoryId={m.memoryId}
+                        initialCount={m.likeCount ?? 0}
+                        initialLiked={m.likedByMe ?? false}
+                      />
+                    </>
                   ) : (
                     <span className="m-badge-lock" aria-label="비공개">
                       <LockIcon />
@@ -189,7 +190,6 @@ export default function MemoriesPage({
 
               <div className="m-card-body">
                 <h3 className="m-title">{m.title}</h3>
-                <p className="m-text">{m.content}</p>
               </div>
             </article>
           ))}
@@ -228,20 +228,24 @@ export default function MemoriesPage({
                 <div className="m-row-head">
                   <span className="m-card-date">{formatDate(m.createdAt)}</span>
                   {m.isPublic ? (
-                    <LikeButton
-                      memoryId={m.memoryId}
-                      initialCount={m.likeCount ?? 0}
-                      initialLiked={m.likedByMe ?? false}
-                    />
+                    <span className="m-card-stats">
+                      <ViewCount count={m.viewCount} />
+                      <LikeButton
+                        memoryId={m.memoryId}
+                        initialCount={m.likeCount ?? 0}
+                        initialLiked={m.likedByMe ?? false}
+                      />
+                    </span>
                   ) : (
                     <span className="m-row-lock" aria-label="비공개">
                       <LockIcon />
                     </span>
                   )}
                 </div>
-                <h3 className="m-row-song">{m.trackName}</h3>
-                <span className="m-row-artist">{m.artistName}</span>
-                <p className="m-row-text">{m.content}</p>
+                <h3 className="m-row-song">{m.title}</h3>
+                <span className="m-row-artist">
+                  {m.trackName} · {m.artistName}
+                </span>
               </div>
             </article>
           ))}

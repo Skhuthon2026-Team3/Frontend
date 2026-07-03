@@ -409,9 +409,12 @@
   color: var(--mt-text);
 }
 
-.memory-foot .like-btn {
+.memory-foot-stats {
   margin-left: auto;
   flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
 }
 
 @media (max-width: 1200px) {
