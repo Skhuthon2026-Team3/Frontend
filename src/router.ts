@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 export type Route =
   | 'home'
   | 'memories'
+  | 'publicMemories'
   | 'create'
   | 'login'
   | 'oauthCallback'
@@ -14,6 +15,7 @@ export type Route =
 const PATH_TO_ROUTE: Record<string, Route> = {
   '/': 'home',
   '/memories': 'memories',
+  '/everyone': 'publicMemories',
   '/create': 'create',
   '/create/success': 'createSuccess',
   '/login': 'login',
@@ -24,6 +26,7 @@ const PATH_TO_ROUTE: Record<string, Route> = {
 const ROUTE_TO_PATH: Record<Exclude<Route, 'memoryDetail' | 'myMemoryDetail'>, string> = {
   home: '/',
   memories: '/memories',
+  publicMemories: '/everyone',
   create: '/create',
   createSuccess: '/create/success',
   login: '/login',

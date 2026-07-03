@@ -174,6 +174,25 @@ export function ArrowLeftIcon({ size = 16 }: IconProps) {
   )
 }
 
+export function HeartIcon({ size = 14, filled = false }: IconProps & { filled?: boolean }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill={filled ? 'currentColor' : 'none'}
+      aria-hidden="true"
+    >
+      <path
+        d="M12 20s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 6.5 4.5 4.5 0 0 1 19 10.5c0 5.15-7 9.5-7 9.5Z"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export function VinylIcon({ size = 60 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true">

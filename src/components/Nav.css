@@ -1,0 +1,296 @@
+/* ===== Nav — src/components/Nav.tsx ===== */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--mt-border);
+}
+
+.nav-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* Smaller right padding nudges 추억 기록하기 + the profile toward the edge. */
+  padding: 23px 48px 23px 80px;
+}
+
+/* Logged out: the wider 로그인 button makes the right group start further left,
+   so pull the whole group (TOP 10 · 추억 기록하기 · 로그인) closer to the edge. */
+.nav-inner-guest {
+  padding-right: 24px;
+}
+
+.brand {
+  font-family: var(--sans);
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -1.2px;
+  text-transform: uppercase;
+  color: var(--mt-text);
+  line-height: 32px;
+}
+
+.brand-link {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.brand-lg {
+  font-weight: 900;
+  font-size: 30px;
+  letter-spacing: -1.5px;
+  line-height: 36px;
+}
+
+.nav-links {
+  /* Pinned to the true center of the nav, independent of the side content. */
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 48px;
+}
+
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mt-text-2);
+  text-decoration: none;
+  line-height: 20px;
+}
+
+.nav-links a:hover {
+  color: var(--mt-text);
+}
+
+.nav-links a.is-active {
+  color: #000;
+  padding-bottom: 4px;
+  border-bottom: 2px solid #000;
+}
+
+/* Realtime ranking widget sits just left of the 추억 기록하기 button. */
+.nav-rank {
+  display: flex;
+  flex: 0 0 auto;
+}
+.nav-rank .rt {
+  /* Grow with the viewport so the ranking title stays readable on wide
+     screens, while leaving room for the centered links (no overlap). */
+  width: clamp(300px, 22vw, 440px);
+  max-width: none;
+  margin: 0;
+}
+.nav-rank .rt-bar {
+  height: 42px;
+  border-radius: 12px;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.btn-outline {
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--mt-text);
+  background: transparent;
+  border: 1px solid var(--mt-text-5);
+  border-radius: 9999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.btn-outline:hover {
+  border-color: var(--mt-text-2);
+  background: var(--mt-surface-3);
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid var(--mt-border);
+  background: var(--mt-surface-2);
+  color: var(--mt-text-3);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s, background 0.2s;
+}
+.avatar:hover {
+  border-color: var(--mt-text-2);
+  background: var(--mt-surface-3);
+}
+
+/* Profile menu (마이페이지 / 로그아웃) */
+.nav-profile {
+  position: relative;
+  display: inline-flex;
+}
+.nav-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 20;
+  min-width: 160px;
+  padding: 6px;
+  background: #fff;
+  border: 1px solid var(--mt-border);
+  border-radius: 14px;
+  box-shadow: 0 16px 32px -12px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.nav-menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 9px;
+  background: none;
+  color: var(--mt-text);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nav-menu-item:hover {
+  background: var(--mt-surface-2);
+}
+
+/* Mobile-only 나의 추억 shortcut — hidden on desktop (nav-links covers it). */
+.nav-my {
+  display: none;
+  align-items: center;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #171717;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.nav-my:hover {
+  background: #f5f5f5;
+}
+.nav-my.is-active {
+  border-color: #171717;
+}
+
+/* Auth actions */
+.btn-login {
+  display: inline-flex;
+  align-items: center;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #171717;
+  text-decoration: none;
+  border: 1px solid #e5e5e5;
+  background: #fff;
+}
+.btn-login:hover {
+  background: #f5f5f5;
+}
+
+/* Drop the ranking box once the window gets narrow so it never squeezes the nav
+   or crowds the centered links. */
+@media (max-width: 1300px) {
+  .nav-rank {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  .nav-inner {
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  .nav-links {
+    display: none;
+  }
+  /* Surface 나의 추억 as a button; keep the profile avatar visible. */
+  .nav-my {
+    display: inline-flex;
+  }
+  /* 나의 추억 & 추억 기록하기 share identical size on mobile. */
+  .nav-my,
+  .nav-create {
+    height: 38px;
+    padding: 0 16px;
+    display: inline-flex;
+    align-items: center;
+    font-size: 14px;
+    line-height: 1;
+  }
+}
+
+@media (max-width: 700px) {
+  /* Compact nav so action buttons never wrap. */
+  .nav-inner {
+    padding: 14px 20px;
+    gap: 12px;
+  }
+  .brand {
+    font-size: 19px;
+    letter-spacing: -0.8px;
+    line-height: 1.2;
+  }
+  .brand-lg {
+    font-size: 22px;
+  }
+  .nav-actions {
+    gap: 8px;
+  }
+  .btn-login,
+  .nav-my,
+  .nav-create {
+    height: 34px;
+    padding: 0 12px;
+    font-size: 13px;
+  }
+  .avatar {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+@media (max-width: 400px) {
+  .nav-inner {
+    padding: 14px 16px;
+    gap: 8px;
+  }
+  .brand {
+    font-size: 17px;
+  }
+  .btn-login,
+  .nav-my,
+  .nav-create {
+    padding: 0 10px;
+    font-size: 12px;
+  }
+  .nav-actions {
+    gap: 6px;
+  }
+}
